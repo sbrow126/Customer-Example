@@ -1,0 +1,69 @@
+<?php
+/**
+ * @file
+ * Code for the CustomerExport feature.
+ */
+
+include_once 'customerexport.features.inc';
+
+
+ /**
+ * Menu hook
+ * This hook defines the menu options for this module
+ */
+
+ function customerexport_menu ()
+{
+
+     $items['customerexport/customer-listing'] = array(
+      'title' => t('All Customer Information'),
+	  'description' => 'This page displays all current customer data', 
+      'access callback' => TRUE,
+	  //'access arguments' => array(),
+	  'page callback' => 'customerexport_customerlisting',
+      'type' => MENU_NORMAL_ITEM,
+    );
+	
+
+
+  return $items;
+}
+
+
+/**
+ * Customer Listings, which lists all submitted Customer records on 1 page, well formatted
+ */
+
+function customerexport_customerlisting ()
+{
+
+
+$output = array();
+
+//Load all the nodes of type customerexport
+$type = "customer_"; 
+$nodes = node_load_multiple(array(), array('type' => $type)); 
+
+
+//For each node, print the data in nice formatting
+foreach($nodes as $node)
+{
+    
+    $formname = $node->nid;
+    $timestamp = date('d M Y H:i:s',$node->field_date_of_birth['und'][0]['value']);
+   $formcontent = '<b>Full Name:</b> ' . $node->field_full_name['und'][0]['value'] . '<br><b>Address:</b> ' . $node->field_address['und'][0]['value'] . '<br><b>Phone</b>: ' . $node->field_phone1['und'][0]['value']. '<br><b>Email: </b>' . $node->field_full_name['und'][0]['value']. '<br><b> Born on:</b></b> ' . $timestamp. '<br><br>';
+     $output[] = array( 
+    $formname => array(
+      '#type' => 'markup',
+      '#markup' => $formcontent)) ;
+  }
+ 
+
+	 return $output; 
+	
+
+}
+
+
+
+
